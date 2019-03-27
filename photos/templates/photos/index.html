@@ -1,0 +1,10 @@
+{% if latest_photos %}
+    <h1>Hello, these are my photos.</h1>
+    <ul>
+    {% for photo in latest_photos %}
+        <li><a href="/media/{{photo.image}}">{{ photo.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No photos are available.</p>
+{% endif %}
