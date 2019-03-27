@@ -1,8 +1,10 @@
 import sys
+import os
 import logging
 import shutil
 from django.apps import AppConfig
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from django.template.defaultfilters import slugify
 
 # .env support
 import environ
@@ -30,13 +32,15 @@ class TelegramUploaderConfig(AppConfig):
         updater.start_polling()
 
 def start(update, context):
-    context.bot.send_message(chat_id=update.message.chat_id, text="I'm a bot, please talk to me!")
+    context.bot.send_message(chat_id=update.message.chat_id, text="Send me a photo to upload it!")
 
 def photo(update, context):
     from photos.models import Photo
     out = update.message.photo[-1].get_file().download()
-    path = f"media/images/{out}"
+    filename, file_extension = os.path.splitext(out)
+    title = update.message.caption if update.message.caption else out
+    path = f"media/images/{slugify(title)}{file_extension}"
     shutil.move(out, path)
-    image = f"images/{out}"
-    Photo.objects.create(title=out, image=image)
+    image = f"images/{slugify(title)}{file_extension}"
+    Photo.objects.create(title=title, image=image)
     context.bot.send_message(chat_id=update.message.chat_id, text="Photo uploaded!")
