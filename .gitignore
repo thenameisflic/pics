@@ -88,5 +88,6 @@ local_settings.py
 **/*/.env
 db.sqlite3
 
-media/
+media/**/*.jpg
+media/**/*.png
 picsenv/
