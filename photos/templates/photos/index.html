@@ -111,8 +111,8 @@
               {% for photo in latest_photos %}
                 <div class="col-md-4">
                   <div class="card mb-4 box-shadow">
-                    <a target="_blank" href="/media/{{photo.image}}">
-                      <img class="card-img-top" src="/media/{{photo.image}}" alt="Card image cap">
+                    <a target="_blank" href="/media/{{photo.disguised_image}}">
+                      <img class="card-img-top" src="/media/{{photo.disguised_image}}" alt="Card image cap">
                     </a>
                     <div class="card-body">
                       <p class="card-text">{{photo.title}}
