@@ -72,5 +72,28 @@ def photo(update, context):
 
     context.bot.send_message(chat_id=update.message.chat_id, text="Photo uploaded!")
 
+    # Upload to instagram if image if bigger than 512x512
+    insta_id = id_generator()
+    insta_path = f"tmp/{slugify(title)}-{insta_id}{file_extension}"
+
+    new_width = 512
+    new_height = 512
+    width, height = pil_image.size   # Get dimensions
+
+    if (width >= 512 and height >= 512):
+        left = (width - new_width)/2
+        top = (height - new_height)/2
+        right = (width + new_width)/2
+        bottom = (height + new_height)/2
+
+        pil_image.convert("RGB").save(f"media/{insta_path}")
+        photo_path = f"media/{insta_path}"
+
+        from InstagramAPI import InstagramAPI
+        InstagramAPI = InstagramAPI(env('INSTAGRAM_USERNAME'), env('INSTAGRAM_PASSWORD'))
+        InstagramAPI.login()
+        caption = f"{title}"
+        InstagramAPI.uploadPhoto(photo_path, caption=caption, is_story=True)
+
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
