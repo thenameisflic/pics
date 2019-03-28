@@ -8,7 +8,7 @@
     <title>Flic Pics</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <!-- Custom styles for this template -->
     <style>
@@ -52,11 +52,34 @@
 
       .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
 
+      .grid {
+        margin: 0 auto;
+        max-width: 600px;
+        min-height: 600px;
+      }
+
+      .grid-sizer,
+      .grid-item { width: 32.6%; margin-bottom: 4px; }
+
+      .feed-container {
+        max-width: 600px;
+      }
+
+      .anon-img {
+        transition: 1s filter linear;
+      }
+
+      .blurred {
+        filter: blur(2px);
+      }
+
+      .visible {
+        filter: blur(0px);
+      }
     </style>
   </head>
 
   <body>
-
     <header>
       <div class="collapse bg-dark" id="navbarHeader">
         <div class="container">
@@ -81,9 +104,17 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
             <strong>Flic Pics</strong>
           </a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+          <div>
+            {% if user.is_authenticated %}
+              <span class="text-white">Hi, {{ user.username }}!</span>
+              <a href="{% url 'logout' %}">log out?</a>
+            {% else %}
+              <a href="{% url 'login' %}" class="mr-2"><strong>Sign in to your account</strong></a>
+            {% endif %}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -91,8 +122,8 @@
     <main role="main">
       <section class="jumbotron text-center">
         <div class="container">
-          <h1 class="jumbotron-heading">Flic Pics</h1>
-          <p class="lead text-muted">These are just some of my favorite pics.</p>
+          <h1 class="jumbotron-heading">Welcome to Flic Pics</h1>
+          <p class="lead text-muted">This is my social media client, so here are some of my favorite pictures.</p>
           <p>
             <a href="https://t.me/flicsl" class="btn btn-primary my-2">
               Text me on Telegram
@@ -105,31 +136,126 @@
       </section>
 
       <div class="album py-5 bg-light">
-        <div class="container">
+        <div class="container feed-container">
           {% if latest_photos %}
-            <div class="row">
-              {% for photo in latest_photos %}
-                <div class="col-md-4">
-                  <div class="card mb-4 box-shadow">
-                    <a target="_blank" href="/media/{{photo.disguised_image}}">
-                      <img class="card-img-top" src="/media/{{photo.disguised_image}}" alt="Card image cap">
-                    </a>
+            {% if user.is_authenticated %}
+            <ul class="nav nav-pills nav-fill" id="homeTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="grid-tab" data-toggle="tab" href="#grid" role="tab" aria-controls="grid" aria-selected="true">View as Grid</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="list" aria-selected="false">View as List</a>
+              </li>
+            </ul>
+            {% else %}
+            <div id="anonAlert" class="alert alert-primary" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+              <p><strong>Heads up! You're not logged in.</strong> <br><a href="{% url 'login' %}">Sign in</a> to your account to view pictures and access more features.</p>
+
+              <div class="accordion mt-3" id="accordionExample">
+                <div class="card">
+                  <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        What is this website?
+                      </button>
+                    </h2>
+                  </div>
+              
+                  <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                     <div class="card-body">
-                      <p class="card-text">{{photo.title}}
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                          
-                        </div>
-                        <small class="text-muted">{{photo.uploaded_at}}</small>
-                      </div>
+                      This is the closest thing i have to an Instagram account. I don't <a target="_blank" href="https://thenameisflic.com/why-i-dont-use-social-media">use social media</a>, 
+                      but i realized i needed a way to stay in touch with my family and friends after moving to another city. Since i don't have anything better to do,
+                      instead of sucking up all of Instagram ads and privacy violations, i created this website so i could share my pics.
                     </div>
                   </div>
                 </div>
-              {% endfor %}
+                <div class="card">
+                  <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                      <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Why do i need an account?
+                      </button>
+                    </h2>
+                  </div>
+                  <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                      This is a public website, <a target="_blank" href="https://www.ted.com/talks/glenn_greenwald_why_privacy_matters">but my life is not</a>.
+                      Anyone (and that means potential employers, acquaintances, gossipmongers and killer bots) can view my watermarked, censored pictures here, but to view the originals you need an account. 
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                      <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        How do i get an account?
+                      </button>
+                    </h2>
+                  </div>
+                  <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                      Just ask me! You can reach me on <a target="_blank" href="https://t.me/flicsl">Telegram</a> anytime, but i'm also available via <a target="_blank" href="mailto:fsfelicianosantana@gmail.com">e-mail</a>.
+                      I will feel honored by your request to be able to know what i'm up to (without, you know, all the ads and drama).
+                    </div>
+                  </div>
+                </div>
               </div>
-          {% else %}
-            <p>No photos are available.</p>
-          {% endif %}
+            </div>
+            {% endif %}
+            <div class="tab-content" id="homeTabContent">
+              <div class="tab-pane fade show active" id="grid" role="tabpanel" aria-labelledby="grid-tab">
+                <div class="grid" style="opacity: 0;">
+                  <div class="grid-sizer"></div>
+                  {% for photo in latest_photos %}
+                    <div class="grid-item">
+                      {% if user.is_authenticated %}
+                        <a target="_blank" href="/media/{{ photo.image }}">
+                          <img class="card-img-top card-img-bottom" src="/media/{{ photo.image }}" alt="{{photo.title}}" title="{{photo.title}}">
+                        </a>
+                      {% else %}
+                        <a href="{% url 'login' %}">
+                          <img class="anon-img card-img-top card-img-bottom blurred" src="/media/{{ photo.disguised_image }}" title="Sign in to view the full post">
+                        </a>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
+                <div class="row justify-content-center mt-1">
+                    {% for photo in latest_photos %}
+                      <div class="col-md-12">
+                        <div class="card mb-4 box-shadow">
+                          {% if user.is_authenticated %}
+                            <a target="_blank" href="/media/{{ photo.image }}">
+                              <img class="card-img-top" src="/media/{{ photo.image }}" alt="{{photo.title}}">
+                            </a>
+                          {% else %}
+                            <a href="{% url 'login' %}">
+                              <img class="card-img-top" src="/media/{{ photo.disguised_image }}" alt="{{photo.title}}" title="Sign in to view the full post">
+                            </a>
+                          {% endif %}
+                          <div class="card-body">
+                            <p class="card-text">{{photo.title}}
+                            <div class="d-flex justify-content-between align-items-center">
+                              <div class="btn-group">
+                                
+                              </div>
+                              <small class="text-muted">{{photo.uploaded_at}}</small>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+              </div>
+          </div>    
+        {% else %}
+          <p>No photos are available.</p>
+        {% endif %}
         </div>
       </div>
 
@@ -147,8 +273,28 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <!-- Masonry-->
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+
+    <script>
+      const grid = document.querySelector(".grid");
+
+      const msnry = new Masonry(grid, {
+        "itemSelector": ".grid-item",
+        "columnWidth": ".grid-sizer",
+        "percentPosition": true,
+        "gutter": 4
+      });
+      
+      grid.style.opacity = 1;
+
+      $("#anonAlert").on("closed.bs.alert", function () {
+        $(".anon-img").addClass("visible").removeClass("blurred");
+      });
+    </script>
   </body>
 </html>
