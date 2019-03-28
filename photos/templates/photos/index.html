@@ -290,7 +290,13 @@
         "gutter": 4
       });
       
-      grid.style.opacity = 1;
+
+      setTimeout(() => {
+        msnry.masonry( 'reload' );
+      }, 10);
+      setTimeout(() => {
+        grid.style.opacity = 1;
+      }, 50);
 
       $("#anonAlert").on("closed.bs.alert", function () {
         $(".anon-img").addClass("visible").removeClass("blurred");
