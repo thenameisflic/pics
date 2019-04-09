@@ -25,7 +25,7 @@ SECRET_KEY = 'd!&1$t72$3pxnh=r&a5to-h^ku##2go^&18irf&^%zs4afi+1+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pics.thenameisflic.com']
+ALLOWED_HOSTS = ['pics.thenameisflic.com', 'localhost']
 
 # Media
 MEDIA_URL = '/media/'
