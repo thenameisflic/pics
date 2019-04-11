@@ -13,8 +13,7 @@ from PIL import Image, ImageDraw
 # .env support
 import environ
 env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
+    UPLOAD_INSTAGRAM_STORIES=(bool, False)
 )
 # reading .env file
 environ.Env.read_env()
@@ -91,11 +90,12 @@ def photo(update, context):
         pil_image.convert("RGB").save(f"media/{insta_path}")
         photo_path = f"media/{insta_path}"
 
-        from InstagramAPI import InstagramAPI
-        InstagramAPI = InstagramAPI(env('INSTAGRAM_USERNAME'), env('INSTAGRAM_PASSWORD'))
-        InstagramAPI.login()
-        caption = f"{title}"
-        InstagramAPI.uploadPhoto(photo_path, caption=caption, is_story=True)
+        if (env('UPLOAD_INSTAGRAM_STORIES')):
+            from InstagramAPI import InstagramAPI
+            InstagramAPI = InstagramAPI(env('INSTAGRAM_USERNAME'), env('INSTAGRAM_PASSWORD'))
+            InstagramAPI.login()
+            caption = f"{title}"
+            InstagramAPI.uploadPhoto(photo_path, caption=caption, is_story=True)
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
