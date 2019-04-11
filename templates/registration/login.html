@@ -81,8 +81,8 @@
         {{ form.username.errors }}
         {% render_field form.password type="password" class="form-control" placeholder="Password" %}
       {% endwith %}
-      <button class="mt-2 btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-      <button class="mt-2 btn btn-lg btn-link btn-block" type="button" data-toggle="modal" data-target="#exampleModalCenter">Create an account</button>
+      <button class="mt-2 btn btn-lg btn-danger rounded-pill btn-block" type="submit">Sign in</button>
+      <button class="mt-2 btn btn-lg btn-link text-danger rounded-pill btn-block" type="button" data-toggle="modal" data-target="#exampleModalCenter">Create an account</button>
       <p class="mt-5 mb-3 text-muted">thenameisflic&copy; {% now 'Y' %}</p>
     </form>
 
@@ -97,7 +97,7 @@
           </div>
           <div class="modal-body">
             Unfortunately, for now, you need to request me an account personally.
-            I feel honored by your request to be able to know what i'm up to (without, you know, all the ads and drama)!
+            I feel honored by your request to be able to know what i'm up to (without, you know, all the ads)!
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

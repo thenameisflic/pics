@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -12,16 +13,54 @@
 
     <!-- Custom styles for this template -->
     <style>
+      @font-face{ 
+        font-family: 'PublicSans';
+        src: url('{% static "fonts/PublicSans-Regular.woff" %}');
+        src: url('{% static "fonts/PublicSans-Regular.woff" %}') format('woff'),
+          url('{% static "fonts/PublicSans-Regular.ttf" %}') format('truetype');
+        font-weight: normal;
+      }
+
+      @font-face{ 
+        font-family: 'PublicSans';
+        src: url('{% static "fonts/PublicSans-Bold.woff" %}');
+        src: url('{% static "fonts/PublicSans-Bold.woff" %}') format('woff'),
+          url('{% static "fonts/PublicSans-Bold.ttf" %}') format('truetype');
+        font-weight: bold;
+      }
+
       :root {
-        --jumbotron-padding-y: 3rem;
+        --jumbotron-padding-y: 5rem;
+      }
+
+      body {
+        font-family: 'PublicSans', var(--font-family-sans-serif);
+      }
+
+      .navbar {
+        position: absolute;
+        width: 100%;
+      }
+
+      .nav-danger .nav-link.active {
+        background-color: var(--red);
+      }
+
+      .nav-danger .nav-link {
+        color: var(--red);
       }
 
       .jumbotron {
         padding-top: var(--jumbotron-padding-y);
         padding-bottom: var(--jumbotron-padding-y);
+        border-radius: 0;
         margin-bottom: 0;
         background-color: #fff;
+        background-image: url('{% static "images/header.svg" %}');
+        background-size: cover;
+        background-repeat: no-repeat;
       }
+
       @media (min-width: 768px) {
         .jumbotron {
           padding-top: calc(var(--jumbotron-padding-y) * 2);
@@ -78,7 +117,7 @@
       }
 
       .loader {
-        color: #007bff;
+        color: #E0312D;
         font-size: 20px;
         margin: 100px auto;
         width: 1em;
@@ -152,39 +191,19 @@
 
   <body>
     <header>
-      <div class="collapse bg-dark" id="navbarHeader">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-8 col-md-7 py-4">
-              <h4 class="text-white">About</h4>
-              <p class="text-muted">My name is Feliciano Santana, a software developer. I do awesome stuff at my own software studio Bloom Games. I’m also a start-up visionary, Node.js evangelist, Unity lover and general compulsive achiever.</p>
-            </div>
-            <div class="col-sm-4 offset-md-1 py-4">
-              <h4 class="text-white">Contact</h4>
-              <ul class="list-unstyled">
-                <li><a href="https://t.me/flicsl" class="text-white">Text me on Telegram</a></li>
-                <li><a href="mailto:fsfelicianosantana@gmail.com" class="text-white">Email me</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="navbar navbar-dark bg-dark box-shadow">
+      <div class="navbar">
         <div class="container d-flex justify-content-between">
-          <a href="#" class="navbar-brand d-flex align-items-center">
+          <a href="#" class="navbar-brand d-flex align-items-center text-white">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
             <strong>Flic Pics</strong>
           </a>
           <div>
             {% if user.is_authenticated %}
-              <span class="text-white">Hi, {{ user.username }}!</span>
-              <a href="{% url 'logout' %}">log out?</a>
+              <span class="text-white font-weight-bold">Hi, {{ user.username }}!</span>
+              <a class="text-danger font-weight-bold" href="{% url 'logout' %}">log out?</a>
             {% else %}
-              <a href="{% url 'login' %}" class="mr-2"><strong>Sign in to your account</strong></a>
+              <a href="{% url 'login' %}" class="btn btn-danger rounded-pill mr-2"><strong>Sign in to your account</strong></a>
             {% endif %}
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
           </div>
         </div>
       </div>
@@ -193,24 +212,25 @@
     <main role="main">
       <section class="jumbotron text-center">
         <div class="container">
-          <h1 class="jumbotron-heading">Welcome to Flic Pics</h1>
-          <p class="lead text-muted">This is my social media client, so here are some of my favorite pictures.</p>
+          <h1 class="jumbotron-heading font-weight-bold">Welcome to Flic Pics</h1>
+          <p class="lead">Because Instagram is overrated</p>
           <p>
-            <a href="https://t.me/flicsl" class="btn btn-primary my-2">
-              Text me on Telegram
+            <a href="https://instagram.com/thenameisflicbot" class="btn btn-danger my-2 rounded-pill font-weight-bold">
+              Follow on Instagram
             </a>
-            <a href="https://thenameisflic.com" class="btn btn-secondary">
-              Visit my blog
+            &nbsp;or&nbsp;
+            <a href="https://t.me/flicsl" class="btn btn-outline-danger rounded-pill font-weight-bold">
+              Text me on Telegram
             </a>
           </p>
         </div>
       </section>
 
-      <div class="album py-5 bg-light">
+      <div class="album py-5">
         <div class="container feed-container">
           {% if latest_photos %}
             {% if user.is_authenticated %}
-            <ul class="nav nav-pills nav-fill" id="homeTab" role="tablist">
+            <ul class="nav nav-danger nav-pills nav-fill" id="homeTab" role="tablist">
               <li class="nav-item">
                 <a class="nav-link active" id="grid-tab" data-toggle="tab" href="#grid" role="tab" aria-controls="grid" aria-selected="true">View as Grid</a>
               </li>
@@ -336,7 +356,7 @@
     <footer class="text-muted">
       <div class="container">
         <p class="float-right">
-          <a href="#">Back to top</a>
+          <a href="#" class="text-danger">Back to top</a>
         </p>
         <p>thenameisflic {% now 'Y' %} &copy;</p>
       </div>
