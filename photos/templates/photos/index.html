@@ -51,7 +51,7 @@
       }
 
       :root {
-        --jumbotron-padding-y: 5rem;
+        --jumbotron-padding-y: 6rem;
       }
 
       body {
@@ -61,6 +61,12 @@
       .navbar {
         position: absolute;
         width: 100%;
+      }
+
+      @media (max-width: 576px) {
+        .navbar .container {
+          justify-content: center !important;
+        }
       }
 
       .nav-danger .nav-link.active {
@@ -224,7 +230,8 @@
               <span class="text-white font-weight-bold">Hi, {{ user.username }}!</span>
               <a class="text-danger font-weight-bold" href="{% url 'logout' %}">log out?</a>
             {% else %}
-              <a href="{% url 'login' %}" class="btn btn-danger rounded-pill mr-2"><strong>Sign in to your account</strong></a>
+              <a href="{% url 'login' %}" class="btn btn-danger rounded-pill mr-2 d-block d-sm-none"><strong>Sign in</strong></a>
+              <a href="{% url 'login' %}" class="btn btn-danger rounded-pill mr-2 d-none d-sm-block"><strong>Sign in to your account</strong></a>
             {% endif %}
           </div>
         </div>
