@@ -59,12 +59,13 @@ def photo(update, context):
     pil_image.convert("RGB").save(f"media/{image_path}")
 
     # Create the disguised version for unauthorized users
-    disguise_img = random.choice(os.listdir('disguises'))
-    disguise = Image.open(f"disguises/{disguise_img}", 'r')
     face_locations = face_recognition.face_locations(image, number_of_times_to_upsample=2)
 
     for (top, right, bottom, left) in face_locations:
+        disguise_img = random.choice(os.listdir('disguises'))
+        disguise = Image.open(f"disguises/{disguise_img}", 'r')
         pil_image.paste(disguise.resize((right - left, bottom - top)), (left, top))
+
     disguised_id = id_generator()
     disguised_path = f"images/anon/{slugify(title)}-{disguised_id}{file_extension}"
     pil_image.convert("RGB").save(f"media/{disguised_path}")
